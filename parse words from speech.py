@@ -51,7 +51,13 @@ def trim_audio(audio_files,offset_files):
 	return audio,SR
 
 
-def extract_words(audio,audio_files,align_files):
+def extract_words(audio,audio_files,align_files,top_10):
+	# os.mkdir("Top 20 Words")
+	if (not("Top 20 Words" in os.listdir())):
+		os.makedirs("Top 20 Words")	
+	else:
+		print("The folder already exists")
+
 	for j in range(len(audio)):
 		temp_audio = audio[j]
 		temp_name = audio_files[j][-16:]
@@ -65,12 +71,21 @@ def extract_words(audio,audio_files,align_files):
 				print("ERROR : \n",temp_align)
 				print("skipping that file ")
 				continue
+			
 			try:
-				wavfile.write(destination_folder+"/"+trimmer[2]+"/"+trimmer[2]+"_"+temp_name,16000,w)	
+				wavfile.write(destination_folder+"/"+trimmer[2]+"/"+trimmer[2]+"_"+temp_name,16000,w)		
 			except:
 				os.makedirs(destination_folder+"/"+trimmer[2])
 				wavfile.write(destination_folder+"/"+trimmer[2]+"/"+trimmer[2]+"_"+temp_name,16000,w)
-
+			
+			try:
+				if(trimmer[2] in top_10):
+					wavfile.write("Top 10 Words"+"/"+trimmer[2]+"/"+trimmer[2]+"_"+temp_name,16000,w)
+				
+			except:
+				if(trimmer[2] in top_10):
+					os.makedirs("Top 10 Words"+"/"+trimmer[2])	
+					wavfile.write("Top 10 Words"+"/"+trimmer[2]+"/"+trimmer[2]+"_"+temp_name,16000,w)
 
 
 audio_files = get_files(audio_filename)
@@ -82,8 +97,23 @@ align_files.sort()
 audio, SR = trim_audio(audio_files,offset_files)
 
 #just to verify the trimmed audio files
-wavfile.write("trimmed_audio_2.wav",16000,audio[2])
-wavfile.write("trimmed_audio_3.wav",16000,audio[3])
-wavfile.write("trimmed_audio_4.wav",16000,audio[4])
+# wavfile.write("trimmed_audio_2.wav",16000,audio[2])
+# wavfile.write("trimmed_audio_3.wav",16000,audio[3])
+# wavfile.write("trimmed_audio_4.wav",16000,audio[4])
 
-extract_words(audio,audio_files,align_files)
+
+dataframe = pd.read_excel("Word count.xlsx")
+
+# print(dataframe.head(10))
+
+top_10 = list(dataframe.iloc[0:10,1])
+top_20 = list(dataframe.iloc[0:10,1])
+
+extract_words(audio,audio_files,align_files,top_10)
+
+# os.chdir(destination_folder)
+
+
+
+# for each in os.listdir():
+# 	if()
