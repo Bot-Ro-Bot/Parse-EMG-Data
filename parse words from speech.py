@@ -20,12 +20,6 @@ else:
 	print("The folder already exists")
 
 
-class Parser:
-	def __init__(self,):
-		new_words = []
-		counts = []
-
-
 def get_files(filename):
 	files = []
 	for file in glob.glob(filename):
@@ -111,9 +105,3 @@ top_20 = list(dataframe.iloc[0:10,1])
 
 extract_words(audio,audio_files,align_files,top_10)
 
-# os.chdir(destination_folder)
-
-
-
-# for each in os.listdir():
-# 	if()
